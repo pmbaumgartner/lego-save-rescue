@@ -85,6 +85,41 @@
     ["Dengar", "BountyHunter", "00 00 00"],
     ["ChiefChirpa", "Scavenger", "00 00 00 01"]
   ];
+  const REPAIR_CANDIDATE_DEFINITIONS = [
+    {
+      id: "01-location-only-safe-landing",
+      title: "Location-only safe landing reset",
+      risk: "minimal test",
+      mode: "location-only",
+      notes: [
+        "Patches GAMEFLOW.BLOB and the current location tail in GAMEPROGRESS.BLOB to a known-good Tatooine landing state.",
+        "Keeps uploaded save metadata, party, and free-play party list files unchanged.",
+        "Use this first to test whether the broken Bespin current-state location is the actual load blocker."
+      ]
+    },
+    {
+      id: "02-location-meta-safe-landing",
+      title: "Location plus metadata safe landing reset",
+      risk: "recommended",
+      mode: "location-meta",
+      notes: [
+        "Patches the resume location and visible save metadata to a known-good Tatooine landing state.",
+        "Keeps the uploaded party and free-play party list files unchanged.",
+        "Does not edit collectibles, achievements, profile data, or other progress-heavy files."
+      ]
+    },
+    {
+      id: "03-full-safe-state-reset",
+      title: "Full safe-state reset",
+      risk: "medium",
+      mode: "full",
+      notes: [
+        "Patches the resume location and active party/free-play state to the known-good safe landing recipe.",
+        "This changes active character, vehicle, and free-play selection state, but does not edit collectibles, achievements, or profile progress files.",
+        "Use this if the location-only and location plus metadata options still fail to load."
+      ]
+    }
+  ];
   const ZIP_LIMITS = {
     maxArchiveBytes: 50 * 1024 * 1024,
     maxEntries: 300,
@@ -652,76 +687,27 @@
     return files;
   }
 
-  function candidateLocationOnlySafeLanding(save, targetSlot) {
+  function makeRepairCandidate(definition, save, targetSlot) {
     return {
-      id: "01-location-only-safe-landing",
-      title: "Location-only safe landing reset",
-      risk: "minimal test",
-      notes: [
-        "Patches GAMEFLOW.BLOB and the current location tail in GAMEPROGRESS.BLOB to a known-good Tatooine landing state.",
-        "Keeps uploaded save metadata, party, and free-play party list files unchanged.",
-        "Use this first to test whether the broken Bespin current-state location is the actual load blocker."
-      ],
-      files: makeSurgicalFiles(save, targetSlot, "location-only")
-    };
-  }
-
-  function candidateLocationMetaSafeLanding(save, targetSlot) {
-    return {
-      id: "02-location-meta-safe-landing",
-      title: "Location plus metadata safe landing reset",
-      risk: "recommended",
-      notes: [
-        "Patches the resume location and visible save metadata to a known-good Tatooine landing state.",
-        "Keeps the uploaded party and free-play party list files unchanged.",
-        "Does not edit collectibles, achievements, profile data, or other progress-heavy files."
-      ],
-      files: makeSurgicalFiles(save, targetSlot, "location-meta")
-    };
-  }
-
-  function candidateFullSafeStateReset(save, targetSlot) {
-    return {
-      id: "03-full-safe-state-reset",
-      title: "Full safe-state reset",
-      risk: "medium",
-      notes: [
-        "Patches the resume location and active party/free-play state to the known-good safe landing recipe.",
-        "This changes active character, vehicle, and free-play selection state, but does not edit collectibles, achievements, or profile progress files.",
-        "Use this if the location-only and location plus metadata options still fail to load."
-      ],
-      files: makeSurgicalFiles(save, targetSlot, "full")
+      id: definition.id,
+      title: definition.title,
+      risk: definition.risk,
+      notes: definition.notes,
+      files: makeSurgicalFiles(save, targetSlot, definition.mode)
     };
   }
 
   function makeRepairCandidates(save, targetSlot) {
-    const plans = [
-      {
-        id: "01-location-only-safe-landing",
-        title: "Location-only safe landing reset",
-        build: () => candidateLocationOnlySafeLanding(save, targetSlot)
-      },
-      {
-        id: "02-location-meta-safe-landing",
-        title: "Location plus metadata safe landing reset",
-        build: () => candidateLocationMetaSafeLanding(save, targetSlot)
-      },
-      {
-        id: "03-full-safe-state-reset",
-        title: "Full safe-state reset",
-        build: () => candidateFullSafeStateReset(save, targetSlot)
-      }
-    ];
     const candidates = [];
     const failures = [];
 
-    for (const plan of plans) {
+    for (const definition of REPAIR_CANDIDATE_DEFINITIONS) {
       try {
-        candidates.push(plan.build());
+        candidates.push(makeRepairCandidate(definition, save, targetSlot));
       } catch (err) {
         failures.push({
-          id: plan.id,
-          title: plan.title,
+          id: definition.id,
+          title: definition.title,
           error: err && err.message ? err.message : String(err)
         });
       }
@@ -989,9 +975,7 @@
       summarizeSave(state.corrupt),
       "",
       "This app will generate a repair package with these options:",
-      "  1. Location-only safe landing reset",
-      "  2. Location plus metadata safe landing reset",
-      "  3. Full safe-state reset",
+      ...REPAIR_CANDIDATE_DEFINITIONS.map((definition, index) => `  ${index + 1}. ${definition.title}`),
       "",
       "Choose the target slot, then generate the repair package."
     ];

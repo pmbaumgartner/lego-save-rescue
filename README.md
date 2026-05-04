@@ -52,6 +52,10 @@ All candidates keep progress-heavy files from the uploaded save where possible.
 5. Launch the game and test the slot.
 6. If it fails, close the game and copy the next candidate over the same test save.
 
+## License
+
+This project is licensed under the MIT License. JSZip is included under its own license in `licenses/JSZip-LICENSE.markdown`.
+
 ## Limits
 
 This targets PC-style save folders and zip archives containing `PROFILEDATA` and `SLOT#` folders/files.
@@ -59,5 +63,3 @@ This targets PC-style save folders and zip archives containing `PROFILEDATA` and
 Uploaded zips are capped at 50 MiB, 300 entries, 160 recognized save files, 32 MiB per recognized save file, and 120 MiB total recognized save data after decompression.
 
 It is not expected to fix encrypted console saves, saves missing core progress files, or saves where collectibles or achievement files are damaged.
-
-JSZip is included under its own license in `licenses/JSZip-LICENSE.markdown`.
