@@ -94,8 +94,17 @@ code {
   border-radius: var(--radius);
 }
 
+.before-start p {
+  margin-bottom: 8px;
+}
+
 .before-start strong {
   color: var(--mustard);
+}
+
+.setting-name {
+  color: var(--text);
+  font-weight: 760;
 }
 
 .field {
