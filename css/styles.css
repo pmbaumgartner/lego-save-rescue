@@ -77,6 +77,15 @@ p {
   color: var(--muted);
 }
 
+a {
+  color: var(--cool-horizon);
+  font-weight: 760;
+}
+
+a:hover {
+  color: var(--mustard);
+}
+
 code {
   color: var(--text);
   background: rgba(121, 173, 220, 0.14);
@@ -276,6 +285,7 @@ footer {
 }
 
 footer p {
+  margin-bottom: 8px;
   font-size: 0.92rem;
 }
 
