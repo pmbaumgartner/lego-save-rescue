@@ -108,6 +108,15 @@ code {
   font-weight: 760;
 }
 
+.instruction-copy {
+  margin: 18px 0;
+}
+
+.instruction-copy p {
+  max-width: none;
+  margin-bottom: 8px;
+}
+
 .field {
   margin: 22px 0;
 }
