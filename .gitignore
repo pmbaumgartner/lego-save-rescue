@@ -1,0 +1,4 @@
+.playwright-cli/
+_site/
+*.zip
+docs/

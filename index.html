@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LEGO TSS Save Rescue</title>
+  <meta name="description" content="Experimental browser-only save rescue tool for LEGO Star Wars: The Skywalker Saga PC saves." />
+  <link rel="icon" href="data:," />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header class="hero">
+    <div class="hero__eyebrow">Browser-based PC save repair</div>
+    <h1>LEGO Star Wars: The Skywalker Saga Save Rescue</h1>
+    <p>
+      Upload a zipped save folder and download repair candidates for saves that fail to resume
+      from a broken location state. Selected files are processed in your browser.
+    </p>
+  </header>
+
+  <main>
+    <section class="notice notice--danger" aria-labelledby="safety-title">
+      <h2 id="safety-title">Work on a copy</h2>
+      <ul class="compact-list">
+        <li>Close the game.</li>
+        <li>Back up your entire <code>SAVEDGAMES</code> folder.</li>
+        <li>Turn off Steam Cloud while testing.</li>
+        <li>Never replace your only save copy.</li>
+      </ul>
+    </section>
+
+    <section class="panel" aria-labelledby="folder-title">
+      <h2 id="folder-title">1. Zip the save folder</h2>
+      <ul class="compact-list">
+        <li>Find the numbered folder that contains <code>PROFILEDATA</code> and your <code>SLOT#</code> folders.</li>
+        <li>Zip that numbered folder. Parent folders are okay.</li>
+        <li>Use one of these common locations:</li>
+      </ul>
+
+      <dl class="path-list">
+        <dt>Windows / Steam</dt>
+        <dd>
+          <pre class="path-block">%APPDATA%\Warner Bros. Interactive Entertainment\LEGO Star Wars - The Skywalker Saga\SAVEDGAMES\STEAM\&lt;your-number&gt;\</pre>
+        </dd>
+
+        <dt>Steam Deck or Linux / Proton</dt>
+        <dd>
+          <pre class="path-block">~/.local/share/Steam/steamapps/compatdata/920210/pfx/drive_c/users/steamuser/AppData/Roaming/Warner Bros. Interactive Entertainment/LEGO Star Wars - The Skywalker Saga/SAVEDGAMES/STEAM/&lt;your-number&gt;/</pre>
+        </dd>
+      </dl>
+
+      <p class="hint">
+        On some Linux installs the Steam folder starts at
+        <code>~/.steam/steam/steamapps/compatdata/920210</code>. For SD cards or alternate Steam
+        libraries, start from that library's <code>steamapps/compatdata/920210</code> folder.
+      </p>
+    </section>
+
+    <section class="panel" aria-labelledby="upload-title">
+      <h2 id="upload-title">2. Upload the zip</h2>
+      <p>
+        Choose the zip you made from that folder.
+      </p>
+
+      <div class="field">
+        <label for="corruptZip">Save folder zip</label>
+        <input id="corruptZip" type="file" accept=".zip,application/zip" />
+        <p class="hint">The original upload is copied into the repair package unchanged.</p>
+      </div>
+
+      <div class="actions">
+        <button id="analyzeBtn" type="button">Analyze</button>
+        <button id="clearBtn" type="button" class="button--secondary">Clear</button>
+      </div>
+    </section>
+
+    <section id="optionsPanel" class="panel" aria-labelledby="options-title" hidden>
+      <h2 id="options-title">3. Generate candidates</h2>
+      <p>
+        Choose the broken slot. The output starts with the smallest location-only repair, then
+        includes broader fallbacks.
+      </p>
+
+      <div class="grid">
+        <div class="field">
+          <label for="targetSlot">Target slot from corrupted save</label>
+          <select id="targetSlot"></select>
+        </div>
+      </div>
+
+      <div class="checks">
+        <label class="check">
+          <input id="includeDiagnostics" type="checkbox" checked />
+          Include diagnostics and manifest files
+        </label>
+      </div>
+
+      <div class="actions">
+        <button id="generateBtn" type="button">Generate repair package</button>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="status-title">
+      <h2 id="status-title">Status</h2>
+      <pre id="statusLog" aria-live="polite">Choose a save folder zip, then click Analyze.</pre>
+    </section>
+
+    <section class="panel" aria-labelledby="inside-title">
+      <h2 id="inside-title">Test the repair package</h2>
+      <p>
+        The downloaded zip contains repair candidates under <code>candidates/</code>. Extract it,
+        then test one candidate folder at a time.
+      </p>
+      <ol class="steps">
+        <li>Start with <code>01-location-only-safe-landing</code>.</li>
+        <li>Copy that candidate's <code>PROFILEDATA</code> and <code>SLOT#</code> folders into your backed-up save-account folder.</li>
+        <li>Launch the game and try the slot.</li>
+        <li>If it fails, close the game and copy the next candidate over the same test save.</li>
+      </ol>
+      <p>
+        The first candidate patches only <code>GAMEFLOW.BLOB</code> and <code>GAMEPROGRESS.BLOB</code>.
+        The second also updates <code>SAVEGAMEMETA.BLOB</code>. The full candidate resets
+        <code>PARTYSYSTEM.BLOB</code> and <code>PARTYFREEPLAYLIST.BLOB</code> only as a last resort.
+      </p>
+    </section>
+
+    <section class="panel" aria-labelledby="limits-title">
+      <h2 id="limits-title">Important limits</h2>
+      <p>
+        This is not a universal save decoder. It targets PC or Proton saves where progress data still
+        exists, but the current resume/location/session state is broken. It does not repair console
+        saves or damaged collectibles and achievement files.
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    <p>
+      Selected zips are processed in your browser and are not sent to a server.
+    </p>
+  </footer>
+
+  <script src="vendor/jszip.min.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
