@@ -634,7 +634,7 @@
     const files = onlyProfileAndSlot(save, targetSlot);
     const required = CURRENT_STATE_BUNDLE.filter((fileName) => !findRel(files, targetSlot, fileName));
     if (required.length) {
-      throw new Error(`Cannot build repair candidate because ${targetSlot} is missing: ${required.join(", ")}.`);
+      throw new Error(`Cannot build repair option because ${targetSlot} is missing: ${required.join(", ")}.`);
     }
 
     setSlotFile(files, targetSlot, "GAMEFLOW.BLOB", patchGameFlow(getSlotBytes(save, targetSlot, "GAMEFLOW.BLOB")), "safe-landing-recipe");
@@ -688,7 +688,7 @@
       notes: [
         "Patches the resume location and active party/free-play state to the known-good safe landing recipe.",
         "This changes active character, vehicle, and free-play selection state, but does not edit collectibles, achievements, or profile progress files.",
-        "Use this if the location-only and location plus metadata candidates still fail to load."
+        "Use this if the location-only and location plus metadata options still fail to load."
       ],
       files: makeSurgicalFiles(save, targetSlot, "full")
     };
@@ -858,7 +858,7 @@
       },
       candidateIds: candidates.map((candidate) => candidate.id),
       candidateBuildFailures: candidateFailures,
-      caveat: "Experimental repair candidates. Back up real saves and disable cloud sync before testing."
+      caveat: "Back up real saves and disable cloud sync before testing."
     }, null, 2);
   }
 
@@ -872,21 +872,21 @@
     return [
       candidate.title,
       "",
-      `Candidate id: ${candidate.id}`,
+      `Repair option id: ${candidate.id}`,
       `Risk level: ${candidate.risk}`,
       `Target slot: ${targetSlot}`,
       "",
-      "What this candidate does:",
+      "What this option does:",
       ...candidate.notes.map((note) => `- ${note}`),
       "",
       "How to test:",
       "1. Back up your real save folder first.",
       "2. Disable Steam Cloud / Epic cloud sync while testing.",
-      "3. Copy the PROFILEDATA folder and the SLOT folder from this candidate into your real numbered save folder.",
+      "3. Copy the PROFILEDATA folder and the SLOT folder from this option into your real numbered save folder.",
       "4. Start the game and try loading the slot.",
-      "5. If it fails, close the game and copy the next candidate over the same test save.",
+      "5. If it fails, close the game and copy the next repair option over the same test save.",
       "",
-      "This candidate is experimental and may not load."
+      "This repair option may not load if the save has additional damage."
     ].join("\n");
   }
 
@@ -894,7 +894,7 @@
     const lines = [
       "LEGO Star Wars: The Skywalker Saga Save Rescue package",
       "",
-      "This package was generated locally in a browser. It contains your original upload and transformed repair candidates.",
+      "This package was generated in your browser. It contains your original upload and transformed repair options.",
       "",
       `Corrupted input: ${corrupt.fileName}`,
       `Target slot: ${targetSlot}`,
@@ -902,8 +902,8 @@
       "Critical safety steps:",
       "1. Back up the real SAVEDGAMES folder before testing anything.",
       "2. Disable Steam Cloud, Epic cloud sync, or other sync tools while testing.",
-      "3. Test one candidate at a time.",
-      "4. If a candidate fails, close the game and replace the test save with the next candidate.",
+      "3. Test one repair option at a time.",
+      "4. If an option fails, close the game and replace the test save with the next option.",
       "",
       "Recommended testing order:",
       ...candidates.map((candidate, index) => `${index + 1}. candidates/${candidate.id} - ${candidate.title}`),
@@ -913,14 +913,14 @@
         ...candidateFailures.map((failure) => `- ${failure.id}: ${failure.error}`),
         ""
       ] : []),
-      "No-reference repair strategy:",
-      "The candidates patch the current resume/location state to a known-good Tatooine landing point without using an external save file.",
-      "The location-only candidate leaves the uploaded metadata, party, and free-play list files unchanged.",
-      "The location plus metadata candidate also updates visible slot planet/thumbnail strings.",
-      "The full candidate also resets the active party/free-play state when the first two candidates are not enough.",
+      "Repair strategy:",
+      "The repair options patch the current resume/location state to a known-good Tatooine landing point without using an external save file.",
+      "The location-only option leaves the uploaded metadata, party, and free-play list files unchanged.",
+      "The location plus metadata option also updates visible slot planet/thumbnail strings.",
+      "The full option also resets the active party/free-play state when the first two options are not enough.",
       "",
       "What to copy:",
-      "Open one candidate folder and copy its PROFILEDATA and SLOT# folders into your real save folder.",
+      "Open one option folder and copy its PROFILEDATA and SLOT# folders into your real save folder.",
       "Typical Steam path:",
       "%APPDATA%\\Warner Bros. Interactive Entertainment\\LEGO Star Wars - The Skywalker Saga\\SAVEDGAMES\\STEAM\\<your-number>\\",
       "",
@@ -928,7 +928,7 @@
       "It targets saves where the game still has progress data but cannot resume from a broken location, party, mission, or current-state context.",
       "",
       "What it cannot promise:",
-      "If the core progress files are damaged, deleted, encrypted, or account-incompatible, these candidates may not recover the save.",
+      "If the core progress files are damaged, deleted, encrypted, or account-incompatible, these repair options may not recover the save.",
       "",
       "The original uploaded zip is stored under original-upload/."
     ];
@@ -942,7 +942,7 @@
       "This folder is not a directly playable save. It contains progress-heavy files extracted from the corrupted upload.",
       "",
       "Use case:",
-      "If no candidate works, create a brand-new save in-game, quit, back it up, then try copying these files into that fresh save's matching slot/profile folders.",
+      "If no option works, create a brand-new save in-game, quit, back it up, then try copying these files into that fresh save's matching slot/profile folders.",
       "",
       `Target slot source: ${targetSlot}`,
       "",
@@ -988,7 +988,7 @@
     const lines = [
       summarizeSave(state.corrupt),
       "",
-      "This app will generate no-reference repair candidates:",
+      "This app will generate a repair package with these options:",
       "  1. Location-only safe landing reset",
       "  2. Location plus metadata safe landing reset",
       "  3. Full safe-state reset",
@@ -1004,10 +1004,10 @@
     const { candidates, failures } = makeRepairCandidates(state.corrupt, targetSlot);
     if (!candidates.length) {
       const details = failures.map((failure) => `${failure.id}: ${failure.error}`).join("; ");
-      throw new Error(`No repair candidates could be built. ${details}`);
+      throw new Error(`No repair options could be built. ${details}`);
     }
 
-    log(`Building ${candidates.length} repair candidates...`);
+    log(`Building repair package with ${candidates.length} options...`);
 
     const zip = new JSZip();
     zip.file(`original-upload/${state.corrupt.fileName}`, state.corrupt.originalBytes, { binary: true });
@@ -1052,9 +1052,9 @@
     log([
       `Generated ${name}`,
       "",
-      `Candidates included: ${candidates.length}`,
+      `Repair options included: ${candidates.length}`,
       ...candidates.map((candidate) => `  - ${candidate.id}: ${candidate.title}`),
-      ...(failures.length ? ["", "Candidates skipped:", ...failures.map((failure) => `  - ${failure.id}: ${failure.error}`)] : []),
+      ...(failures.length ? ["", "Options skipped:", ...failures.map((failure) => `  - ${failure.id}: ${failure.error}`)] : []),
       "",
       "The package also includes original-upload/ and progress-transplant-kit/.",
       "Read README_FIRST.txt inside the downloaded zip before testing."

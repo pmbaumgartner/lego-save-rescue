@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>LEGO TSS Save Rescue</title>
-  <meta name="description" content="Experimental browser-only save rescue tool for LEGO Star Wars: The Skywalker Saga PC saves." />
+  <meta name="description" content="Browser-based save repair for LEGO Star Wars: The Skywalker Saga PC saves." />
   <link rel="icon" href="data:," />
   <link rel="stylesheet" href="css/styles.css" />
 </head>
@@ -14,8 +14,8 @@
     <p class="hero__game-title">LEGO Star Wars: The Skywalker Saga</p>
     <h1>Save Rescue</h1>
     <p>
-      Upload a zipped save folder and download repair candidates for saves that fail to resume
-      from a broken location state. Selected files are processed in your browser.
+      Upload a zipped save folder to build a repair package for PC saves that fail to resume
+      from a broken location state. Files are processed in your browser.
     </p>
   </header>
 
@@ -54,7 +54,7 @@
     <section class="panel" aria-labelledby="upload-title">
       <h2 id="upload-title">2. Upload the zip</h2>
       <p>
-        Choose the zip you made from that folder.
+        Choose the zipped save folder.
       </p>
 
       <div class="field">
@@ -70,10 +70,10 @@
     </section>
 
     <section id="optionsPanel" class="panel" aria-labelledby="options-title" hidden>
-      <h2 id="options-title">3. Generate candidates</h2>
+      <h2 id="options-title">3. Generate repair package</h2>
       <p>
-        Choose the broken slot. The output starts with the smallest location-only repair, then
-        includes broader fallbacks.
+        Choose the broken slot. The package starts with a focused location repair and includes
+        broader fallback options.
       </p>
 
       <div class="grid">
@@ -103,18 +103,18 @@
     <section class="panel" aria-labelledby="inside-title">
       <h2 id="inside-title">Test the repair package</h2>
       <p>
-        The downloaded zip contains repair candidates under <code>candidates/</code>. Extract it,
-        then test one candidate folder at a time.
+        The downloaded zip contains repair options under <code>candidates/</code>. Extract it,
+        then test one option at a time.
       </p>
       <ol class="steps">
         <li>Start with <code>01-location-only-safe-landing</code>.</li>
-        <li>Copy that candidate's <code>PROFILEDATA</code> and <code>SLOT#</code> folders into your backed-up save-account folder.</li>
+        <li>Copy that option's <code>PROFILEDATA</code> and <code>SLOT#</code> folders into your backed-up save-account folder.</li>
         <li>Launch the game and try the slot.</li>
-        <li>If it fails, close the game and copy the next candidate over the same test save.</li>
+        <li>If it fails, close the game and copy the next repair option over the same test save.</li>
       </ol>
       <p>
-        The first candidate patches only <code>GAMEFLOW.BLOB</code> and <code>GAMEPROGRESS.BLOB</code>.
-        The second also updates <code>SAVEGAMEMETA.BLOB</code>. The full candidate resets
+        The first option patches only <code>GAMEFLOW.BLOB</code> and <code>GAMEPROGRESS.BLOB</code>.
+        The second also updates <code>SAVEGAMEMETA.BLOB</code>. The full option resets
         <code>PARTYSYSTEM.BLOB</code> and <code>PARTYFREEPLAYLIST.BLOB</code> only as a last resort.
       </p>
     </section>
@@ -122,9 +122,9 @@
     <section class="panel" aria-labelledby="limits-title">
       <h2 id="limits-title">Important limits</h2>
       <p>
-        This is not a universal save decoder. It targets PC or Proton saves where progress data still
-        exists, but the current resume/location/session state is broken. It does not repair console
-        saves or damaged collectibles and achievement files.
+        This tool is scoped to PC and Proton saves where progress data still exists, but the
+        current resume, location, or session state is broken. It does not repair console saves,
+        damaged collectibles, or achievement files.
       </p>
     </section>
   </main>
