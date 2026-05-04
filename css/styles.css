@@ -95,6 +95,7 @@ code {
 }
 
 .before-start p {
+  max-width: none;
   margin-bottom: 8px;
 }
 
