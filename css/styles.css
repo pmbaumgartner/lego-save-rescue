@@ -47,6 +47,14 @@ footer {
   text-transform: uppercase;
 }
 
+.hero__game-title {
+  max-width: none;
+  margin: 14px 0 8px;
+  color: var(--cool-horizon);
+  font-size: clamp(1.1rem, 2.2vw, 1.65rem);
+  font-weight: 850;
+}
+
 h1,
 h2 {
   margin: 0 0 16px;
